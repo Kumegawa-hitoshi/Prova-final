@@ -23,7 +23,7 @@ app.MapPost("/api/livros", (BibliotecaDbContext dbContext, Livro livro) =>
     {
         return Results.BadRequest("Autor deve ter no mínimo 3 caracteres.");
     }
-
+    
     var categoria = dbContext.Categorias.Find(livro.CategoriaId);
     if (categoria == null)
     {
@@ -33,7 +33,7 @@ app.MapPost("/api/livros", (BibliotecaDbContext dbContext, Livro livro) =>
     livro.Categoria = categoria;
     dbContext.Livros.Add(livro);
     dbContext.SaveChanges();
-
+    
     return Results.Created($"/api/livros/{livro.Id}", livro);
 });
 
@@ -46,6 +46,41 @@ app.MapGet("/api/livros/{id}", (BibliotecaDbContext dbContext, int id) =>
     }
     return Results.Ok(livro);
 });
+
+app.MapPut("/api/livros/{id}", (BibliotecaDbContext dbContext, int id, Livro livroAtualizado) =>
+{
+    var livroExistente = dbContext.Livros.Find(id);
+    if (livroExistente == null)
+    {
+        return Results.NotFound($"Livro com ID {id} não encontrado para atualização.");
+    }
+
+    if (livroAtualizado.Titulo?.Length < 3)
+    {
+        return Results.BadRequest("Título deve ter no mínimo 3 caracteres.");
+    }
+    if (livroAtualizado.Autor?.Length < 3)
+    {
+        return Results.BadRequest("Autor deve ter no mínimo 3 caracteres.");
+    }
+
+    var categoria = dbContext.Categorias.Find(livroAtualizado.CategoriaId);
+    if (categoria == null)
+    {
+        return Results.NotFound("Categoria inválida. O ID da categoria fornecido não existe.");
+    }
+
+    livroExistente.Titulo = livroAtualizado.Titulo;
+    livroExistente.Autor = livroAtualizado.Autor;
+    livroExistente.CategoriaId = livroAtualizado.CategoriaId;
+    livroExistente.Categoria = categoria;
+
+    dbContext.SaveChanges();
+    
+    var livroComCategoria = dbContext.Livros.Include(l => l.Categoria).FirstOrDefault(l => l.Id == id);
+    return Results.Ok(livroComCategoria);
+});
+
 
 app.MapDelete("/api/livros/{id}", (BibliotecaDbContext dbContext, int id) =>
 {
