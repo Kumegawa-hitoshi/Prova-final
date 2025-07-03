@@ -37,5 +37,27 @@ app.MapPost("/api/livros", (BibliotecaDbContext dbContext, Livro livro) =>
     return Results.Created($"/api/livros/{livro.Id}", livro);
 });
 
+app.MapGet("/api/livros/{id}", (BibliotecaDbContext dbContext, int id) =>
+{
+    var livro = dbContext.Livros.Include(l => l.Categoria).FirstOrDefault(l => l.Id == id);
+    if (livro == null)
+    {
+        return Results.NotFound($"Livro com ID {id} não encontrado.");
+    }
+    return Results.Ok(livro);
+});
+
+app.MapDelete("/api/livros/{id}", (BibliotecaDbContext dbContext, int id) =>
+{
+    var livro = dbContext.Livros.Find(id);
+    if (livro == null)
+    {
+        return Results.NotFound($"Livro com ID {id} não encontrado para remoção.");
+    }
+
+    dbContext.Livros.Remove(livro);
+    dbContext.SaveChanges();
+    return Results.NoContent();
+});
 
 app.Run();
