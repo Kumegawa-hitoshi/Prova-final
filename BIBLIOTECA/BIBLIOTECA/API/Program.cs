@@ -23,7 +23,7 @@ app.MapPost("/api/livros", (BibliotecaDbContext dbContext, Livro livro) =>
     {
         return Results.BadRequest("Autor deve ter no mínimo 3 caracteres.");
     }
-    
+
     var categoria = dbContext.Categorias.Find(livro.CategoriaId);
     if (categoria == null)
     {
@@ -33,7 +33,7 @@ app.MapPost("/api/livros", (BibliotecaDbContext dbContext, Livro livro) =>
     livro.Categoria = categoria;
     dbContext.Livros.Add(livro);
     dbContext.SaveChanges();
-    
+
     return Results.Created($"/api/livros/{livro.Id}", livro);
 });
 
