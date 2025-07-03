@@ -1,10 +1,112 @@
-### Lista de Tarefas
-GET http://localhost:5231
+@baseUrl = http://localhost:5000/api
 
-### Cadastrar Tarefa
-POST http://localhost:5231
+### 1. Criar Livro Válido (deve retornar 201 Created)
+POST {{baseUrl}}/livros
 Content-Type: application/json
 
 {
-
+    "titulo": "O Senhor dos Anéis",
+    "autor": "J.R.R. Tolkien",
+    "categoriaId": 3
 }
+
+### 2. Criar Livro Título Curto (deve retornar 400 Bad Request)
+POST {{baseUrl}}/livros
+Content-Type: application/json
+
+{
+    "titulo": "Oi",
+    "autor": "Autor Válido",
+    "categoriaId": 2
+}
+
+### 3. Criar Livro Autor Curto (deve retornar 400 Bad Request)
+POST {{baseUrl}}/livros
+Content-Type: application/json
+
+{
+    "titulo": "Título Válido",
+    "autor": "Eu",
+    "categoriaId": 4
+}
+
+### 4. Criar Livro Categoria Inválida (deve retornar 404 Not Found)
+POST {{baseUrl}}/livros
+Content-Type: application/json
+
+{
+    "titulo": "Livro com Categoria Zumbi",
+    "autor": "Autor Desconhecido",
+    "categoriaId": 99
+}
+
+### 5. Listar Todos os Livros (deve retornar 200 OK)
+GET {{baseUrl}}/livros
+
+### 6. Obter Livro por ID Válido (deve retornar 200 OK)
+# Altere o '1' para um ID que exista no seu banco
+GET {{baseUrl}}/livros/1
+
+### 7. Obter Livro por ID Inválido (deve retornar 404 Not Found)
+GET {{baseUrl}}/livros/999
+
+### 8. Atualizar Livro Válido (deve retornar 200 OK)
+# Altere o '1' para um ID que exista
+PUT {{baseUrl}}/livros/1
+Content-Type: application/json
+
+{
+    "titulo": "O Hobbit",
+    "autor": "J.R.R. Tolkien",
+    "categoriaId": 3
+}
+
+### 9. Atualizar Livro Título Curto (deve retornar 400 Bad Request)
+# Altere o '1' para um ID que exista
+PUT {{baseUrl}}/livros/1
+Content-Type: application/json
+
+{
+    "titulo": "A",
+    "autor": "Autor Atualizado",
+    "categoriaId": 5
+}
+
+### 10. Atualizar Livro Autor Curto (deve retornar 400 Bad Request)
+# Altere o '1' para um ID que exista
+PUT {{baseUrl}}/livros/1
+Content-Type: application/json
+
+{
+    "titulo": "Título Atualizado",
+    "autor": "B",
+    "categoriaId": 1
+}
+
+### 11. Atualizar Livro Categoria Inválida (deve retornar 404 Not Found)
+# Altere o '1' para um ID que exista
+PUT {{baseUrl}}/livros/1
+Content-Type: application/json
+
+{
+    "titulo": "Livro com Categoria Quebrada",
+    "autor": "Autor Insistente",
+    "categoriaId": 99
+}
+
+### 12. Atualizar Livro com ID Inválido na URL (deve retornar 404 Not Found)
+PUT {{baseUrl}}/livros/999
+Content-Type: application/json
+
+{
+    "titulo": "Não vai funcionar",
+    "autor": "Fantasma",
+    "categoriaId": 1
+}
+
+### 13. Remover Livro por ID Válido (deve retornar 204 No Content)
+# Altere para um ID que você queira remover
+DELETE {{baseUrl}}/livros/1
+
+### 14. Remover Livro por ID Inválido (deve retornar 404 Not Found)
+DELETE {{baseUrl}}/livros/999
